@@ -132,3 +132,53 @@ aprobación de reembolso.
    `Cl4ve-Larga-Unica-2026!` no aparece (`No está en el diccionario`). En la
    práctica, las contraseñas se guardan con bcrypt o Argon2 y sal, nunca con
    SHA-256 simple.
+
+## Video 6: tipos de controles
+
+Demo de controles preventivo, detectivo y correctivo sobre un login ficticio
+(`demo_controles.py`, puerto 5003, solo localhost).
+
+1. **Ejecutar la demo.**
+
+   ```powershell
+   python demo_controles.py
+   ```
+
+   Abre http://127.0.0.1:5003/ (usuario `admin`, clave correcta
+   `Cl4ve-Larga-2026`).
+
+2. **Sin controles.** Abre
+   http://127.0.0.1:5003/modo?preventivo=0&detectivo=0 e intenta 6 veces con
+   una clave incorrecta: siempre "Credenciales incorrectas", sin líneas en la
+   terminal y sin `auditoria.log`.
+
+3. **Control detectivo.** Abre
+   http://127.0.0.1:5003/modo?preventivo=0&detectivo=1 y repite 6 intentos
+   fallidos: la terminal imprime cada intento y, desde el quinto, una línea
+   `ALERTA`. El ataque no se frena: el sexto intento sigue respondiendo
+   "Credenciales incorrectas".
+
+4. **Control preventivo.** Abre
+   http://127.0.0.1:5003/modo?preventivo=1&detectivo=1, falla 5 veces y luego
+   entra con la clave correcta: responde "Demasiados intentos. Cuenta
+   bloqueada temporalmente." (60 s) y el log registra `result=BLOQUEADO`.
+
+5. **Control correctivo.** Abre
+   http://127.0.0.1:5003/modo?preventivo=0&detectivo=0, inicia sesión con la
+   clave correcta y comprueba que `/panel` muestra "Sesión activa". En otra
+   pestaña abre http://127.0.0.1:5003/revocar/admin; al recargar `/panel`
+   sale "Sesión no válida o revocada". `Cl4ve-Larga-2026` ya no entra y
+   `Nueva-Clave-2026!` sí.
+
+6. **Ver el registro de auditoría.** Con el modo detectivo activo se crea
+   `auditoria.log` junto al script:
+
+   ```powershell
+   Get-Content auditoria.log
+   Get-Content auditoria.log -Wait   # seguirlo en vivo
+   ```
+
+7. **Reiniciar el estado.** Las sesiones, los fallos, los bloqueos y el cambio
+   de clave viven en memoria. Detén el servidor con `Ctrl + C`, borra
+   `auditoria.log` (`Remove-Item auditoria.log`) y vuelve a ejecutar
+   `python demo_controles.py`.
