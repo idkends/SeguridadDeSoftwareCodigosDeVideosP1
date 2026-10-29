@@ -84,3 +84,51 @@ FoodExpress con inyeccion SQL en el login.
    incorrectas", porque la consulta parametrizada (`?`) nunca mezcla la entrada
    con el SQL. El usuario `admin` con la clave real `Cl4ve-Larga-2026` sigue
    entrando con normalidad.
+
+## Video 5: ataques más comunes
+
+Demo independiente en `demo_ataques.py` (puerto 5002): credenciales que viajan
+por HTTP y un ataque de repetición (replay attack) sobre un enlace de
+aprobación de reembolso.
+
+1. Ejecuta:
+
+   ```powershell
+   python demo_ataques.py
+   ```
+
+   Abre http://127.0.0.1:5002
+
+2. **Snooping/sniffing de credenciales (HTTP sin cifrar).** Abre
+   http://127.0.0.1:5002/login-http, llena usuario y clave, y pulsa "Entrar".
+   En la terminal donde corre `demo_ataques.py` aparece la línea
+   `Cuerpo tal como viaja por HTTP: u=...&p=...`: así viaja el formulario por
+   la red cuando no hay HTTPS, en texto legible para cualquiera que esté
+   escuchando el tráfico.
+
+3. **Replay attack (vulnerable).** Abre
+   http://127.0.0.1:5002/aprobar/tok-1042-abc y recarga la página varias
+   veces: el contador de "Aprobaciones con este token" sube (1, 2, 3...). El
+   mismo enlace, capturado una sola vez, se puede reutilizar para aprobar el
+   reembolso tantas veces como se quiera.
+
+4. **Control: token de un solo uso.** Abre
+   http://127.0.0.1:5002/aprobar-seguro/tok-1042-abc: la primera vez aprueba
+   el reembolso. Recarga la misma URL: ahora responde 409 "Token ya usado:
+   solicitud rechazada", porque el token ya se marcó como consumido.
+
+5. **Reiniciar el contador de aprobaciones.** El contador y la lista de
+   tokens usados viven en memoria. Para reiniciarlos, detén el servidor con
+   `Ctrl + C` en la terminal y vuelve a ejecutar `python demo_ataques.py`.
+
+6. **Ataque por diccionario a contraseñas.** Ejecuta:
+
+   ```powershell
+   python ataque_contrasenas.py
+   ```
+
+   Muestra que la clave débil `admin123` se encuentra en el diccionario
+   (`ENCONTRADA: admin123 ...`), mientras que la clave larga y única
+   `Cl4ve-Larga-Unica-2026!` no aparece (`No está en el diccionario`). En la
+   práctica, las contraseñas se guardan con bcrypt o Argon2 y sal, nunca con
+   SHA-256 simple.

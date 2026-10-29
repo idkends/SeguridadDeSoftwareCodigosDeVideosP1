@@ -3,7 +3,7 @@ from flask import Flask, request
 
 app = Flask(__name__)
 
-MODO_SEGURO = True   # False = vulnerable | True = con el control aplicado
+MODO_SEGURO = False   # False = vulnerable | True = con el control aplicado
 
 # Base de datos en memoria con datos ficticios
 db = sqlite3.connect(":memory:", check_same_thread=False)
