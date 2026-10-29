@@ -22,56 +22,194 @@ PLANTILLA = """
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>FoodExpress</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #fff4e6; margin: 0;
-           display: flex; flex-direction: column; align-items: center; padding: 40px 16px; }
-    h1 { color: #e8590c; font-size: 48px; margin-bottom: 4px; }
-    p { color: #495057; font-size: 18px; }
-    .botones { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; margin-top: 24px; }
-    .boton { background: #e8590c; color: #fff; text-decoration: none; font-size: 20px; border: 0;
-             cursor: pointer; padding: 18px 36px; border-radius: 12px; box-shadow: 0 4px 8px rgba(0,0,0,.15); }
-    .boton:hover { background: #d9480f; }
-    .tarjeta { background: #fff; padding: 32px 48px; border-radius: 16px;
-               box-shadow: 0 4px 12px rgba(0,0,0,.1); text-align: center; }
+    :root {
+      --carbon: #19120f;
+      --carbon-alto: #211813;
+      --papel: #f3e9dc;
+      --papel-tenue: #c9bba8;
+      --coral: #ff4d2e;
+      --coral-fuerte: #ff6a3d;
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body { margin: 0; }
+
+    body {
+      font-family: -apple-system, "Segoe UI", system-ui, Roboto, Arial, sans-serif;
+      background: var(--carbon);
+      color: var(--papel);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .franja {
+      padding: 28px 48px;
+      border-bottom: 1px solid rgba(243,233,220,.08);
+    }
+
+    .marca {
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.01em;
+      color: var(--papel);
+      opacity: 0;
+      animation: subir 200ms ease-out forwards;
+    }
+
+    .marca span { color: var(--coral); }
+
+    main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 56px 48px 80px;
+      max-width: 760px;
+    }
+
+    h1 {
+      font-size: clamp(34px, 6vw, 56px);
+      font-weight: 700;
+      line-height: 1.05;
+      letter-spacing: -0.03em;
+      color: var(--papel);
+      margin: 0 0 20px;
+      opacity: 0;
+      transform: translateY(14px);
+      animation: subir 260ms cubic-bezier(.23,1,.32,1) 40ms forwards;
+    }
+
+    .cuerpo {
+      font-size: 19px;
+      line-height: 1.55;
+      color: var(--papel-tenue);
+      margin: 0 0 36px;
+      max-width: 520px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: subir 260ms cubic-bezier(.23,1,.32,1) 90ms forwards;
+    }
+
+    .cuerpo strong { color: var(--papel); font-weight: 700; }
+
+    .cifra {
+      font-size: clamp(44px, 9vw, 88px);
+      font-weight: 700;
+      letter-spacing: -0.04em;
+      color: var(--coral);
+      line-height: 1;
+      margin: 0 0 36px;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: subir 260ms cubic-bezier(.23,1,.32,1) 90ms forwards;
+    }
+
+    .acciones {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      opacity: 0;
+      transform: translateY(12px);
+      animation: subir 260ms cubic-bezier(.23,1,.32,1) 140ms forwards;
+    }
+
+    .boton {
+      background: var(--coral);
+      color: var(--carbon);
+      text-decoration: none;
+      font-size: 18px;
+      font-weight: 700;
+      border: 0;
+      cursor: pointer;
+      padding: 16px 30px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      transition: transform 140ms cubic-bezier(.23,1,.32,1), background 140ms ease-out;
+    }
+
+    .boton:hover { background: var(--coral-fuerte); }
+    .boton:active { transform: scale(.97); }
+
+    .boton.fantasma {
+      background: transparent;
+      color: var(--papel);
+      box-shadow: inset 0 0 0 1px rgba(243,233,220,.3);
+    }
+
+    .boton.fantasma:hover { box-shadow: inset 0 0 0 1px rgba(243,233,220,.6); background: rgba(243,233,220,.04); }
+
+    .boton:focus-visible, a:focus-visible, button:focus-visible, input:focus-visible {
+      outline: 2px solid var(--coral);
+      outline-offset: 3px;
+    }
+
+    form { margin: 0; }
+
+    @keyframes subir {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      * { animation: none !important; opacity: 1 !important; transform: none !important; transition: none !important; }
+    }
+
+    @media (max-width: 560px) {
+      .franja, main { padding-left: 24px; padding-right: 24px; }
+    }
   </style>
 </head>
 <body>
-  <h1>FoodExpress</h1>
+  <div class="franja"><div class="marca">food<span>express</span></div></div>
   {% if vista == "inicio" %}
-    <p>Elige una opcion de la demo.</p>
-    <div class="botones">
-      <a class="boton" href="/login/1">Iniciar sesion (cliente 1)</a>
-      <a class="boton" href="/carrito">Carrito</a>
-      <a class="boton" href="/reporte/10">Reporte</a>
-    </div>
+    <main>
+      <h1>Pide. Paga.<br>Se resuelve al vuelo.</h1>
+      <p class="cuerpo">Demo de FoodExpress para el video de seguridad. Tres rutas, tres fallas distintas.</p>
+      <div class="acciones">
+        <a class="boton" href="/login/1">Entrar como cliente 1</a>
+        <a class="boton fantasma" href="/carrito">Carrito</a>
+        <a class="boton fantasma" href="/reporte/10">Reporte</a>
+      </div>
+    </main>
   {% elif vista == "login" %}
-    <div class="tarjeta">
-      <p>Sesion iniciada como cliente <strong>{{ cliente_id }}</strong>.</p>
-      <a class="boton" href="/">Volver al inicio</a>
-    </div>
+    <main>
+      <h1>Sesion activa</h1>
+      <p class="cuerpo">Identidad establecida como cliente <strong>{{ cliente_id }}</strong>, sin contrasena.</p>
+      <div class="acciones"><a class="boton" href="/">Volver al inicio</a></div>
+    </main>
   {% elif vista == "carrito" %}
-    <div class="tarjeta">
-      <p>Tu carrito: <strong>Pizza</strong> - $12.50</p>
-      <form method="post" action="/comprar">
+    <main>
+      <h1>Tu carrito</h1>
+      <p class="cuerpo">Pizza &middot; una unidad.</p>
+      <div class="cifra">$12.50</div>
+      <form method="post" action="/comprar" class="acciones">
         <input type="hidden" name="producto" value="Pizza">
         <input type="hidden" name="precio" value="12.50">
         <button class="boton" type="submit">Comprar</button>
       </form>
-    </div>
+    </main>
   {% elif vista == "comprado" %}
-    <div class="tarjeta">
-      <p>Pedido registrado por ${{ precio }}</p>
-      <a class="boton" href="/">Volver al inicio</a>
-    </div>
+    <main>
+      <h1>Pedido registrado</h1>
+      <p class="cuerpo">Monto cobrado por el servidor:</p>
+      <div class="cifra">${{ precio }}</div>
+      <div class="acciones"><a class="boton" href="/">Volver al inicio</a></div>
+    </main>
   {% elif vista == "reporte" %}
-    <div class="tarjeta">
-      <p>Fibonacci({{ n }}) = <strong>{{ resultado }}</strong></p>
-      <a class="boton" href="/">Volver al inicio</a>
-    </div>
+    <main>
+      <h1>Fibonacci({{ n }})</h1>
+      <div class="cifra">{{ resultado }}</div>
+      <div class="acciones"><a class="boton" href="/">Volver al inicio</a></div>
+    </main>
   {% elif vista == "pedido" %}
-    <div class="tarjeta">
-      <p>&#10003; Pedido de <strong>{{ producto }}</strong> registrado.</p>
-      <a class="boton" href="/">Volver al inicio</a>
-    </div>
+    <main>
+      <h1>Pedido confirmado</h1>
+      <p class="cuerpo">Producto registrado: <strong>{{ producto }}</strong>.</p>
+      <div class="acciones"><a class="boton" href="/">Volver al inicio</a></div>
+    </main>
   {% endif %}
 </body>
 </html>

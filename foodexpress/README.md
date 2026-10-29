@@ -54,3 +54,33 @@ Muestra que un hash solo no prueba el origen (`True`), pero una firma HMAC sin l
 
 Ejecuta `python trazabilidad.py` para ver logs malos vs. utiles y cuentas compartidas vs. individuales.
 Los comandos de firma digital (OpenSSL) estan en `comandos_firma.txt`.
+
+## Video 4: amenaza, vulnerabilidad, riesgo y ataque
+
+Demo independiente en `demo_riesgo.py` (puerto 5001): un panel de administracion de
+FoodExpress con inyeccion SQL en el login.
+
+1. Ejecuta:
+
+   ```powershell
+   python demo_riesgo.py
+   ```
+
+   Abre http://127.0.0.1:5001
+
+2. Prueba una clave incorrecta: usuario `admin`, clave `clave-equivocada`.
+   El panel responde "Credenciales incorrectas".
+
+3. Prueba el ataque: usuario `admin' --`, clave (cualquier valor).
+   La comilla cierra la cadena SQL y `--` comenta el resto de la consulta, de modo
+   que la condicion de la clave nunca se evalua. El panel entra sin conocer la
+   clave real y muestra los clientes.
+
+4. Abre `demo_riesgo.py` y cambia `MODO_SEGURO = False` por `MODO_SEGURO = True`
+   (es la unica linea que se edita a mano).
+
+5. Reinicia la app (`Ctrl+C` y `python demo_riesgo.py` de nuevo) y repite el
+   paso 3 con el mismo usuario `admin' --`: ahora responde "Credenciales
+   incorrectas", porque la consulta parametrizada (`?`) nunca mezcla la entrada
+   con el SQL. El usuario `admin` con la clave real `Cl4ve-Larga-2026` sigue
+   entrando con normalidad.
