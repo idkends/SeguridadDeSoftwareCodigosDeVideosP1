@@ -49,3 +49,8 @@ Muestra que un hash solo no prueba el origen (`True`), pero una firma HMAC sin l
 2. Visita http://127.0.0.1:5000/static/respaldo_clientes.csv: el archivo se descarga con datos de clientes (el problema de seguridad).
 3. Mueve `static/respaldo_clientes.csv` a la carpeta `privado/`.
 4. Recarga la URL del paso 2: ahora devuelve error 404.
+
+## Video 3: trazabilidad y no repudio
+
+Ejecuta `python trazabilidad.py` para ver logs malos vs. utiles y cuentas compartidas vs. individuales.
+Los comandos de firma digital (OpenSSL) estan en `comandos_firma.txt`.

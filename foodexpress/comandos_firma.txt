@@ -1,0 +1,17 @@
+# Generar claves de María
+openssl genrsa -out privada_maria.pem 2048
+openssl rsa -in privada_maria.pem -pubout -out publica_maria.pem
+
+# Crear y firmar la aprobación
+echo "REEMBOLSO pedido=1042 monto=200 aprobado_por=maria.gerente" > aprobacion.txt
+openssl dgst -sha256 -sign privada_maria.pem -out aprobacion.sig aprobacion.txt
+
+# Verificar (resultado esperado: Verified OK)
+openssl dgst -sha256 -verify publica_maria.pem -signature aprobacion.sig aprobacion.txt
+
+# Alterar el monto y volver a verificar (resultado esperado: Verification failure)
+echo "REEMBOLSO pedido=1042 monto=2000 aprobado_por=maria.gerente" > aprobacion.txt
+openssl dgst -sha256 -verify publica_maria.pem -signature aprobacion.sig aprobacion.txt
+
+# Limpiar archivos para volver a grabar
+rm privada_maria.pem publica_maria.pem aprobacion.txt aprobacion.sig
