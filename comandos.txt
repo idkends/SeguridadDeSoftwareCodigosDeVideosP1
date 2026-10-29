@@ -1,0 +1,21 @@
+cd "C:\Users\KENNED\Desktop\Seguridad Videos\Primer Parcial\Video 1.1.2\foodexpress"
+venv\bin\python.exe app.py
+
+
+
+
+
+
+Utilidad
+
+cd "/c/Users/KENNED/Desktop/Seguridad Videos/Primer Parcial/Video 1.1.2"
+mkdir demo_utilidad && cd demo_utilidad
+
+echo "pedido1,pizza,12.50" > respaldo.csv
+ls    
+
+openssl enc -aes-256-cbc -pbkdf2 -in respaldo.csv -out respaldo.enc -pass pass:ClaveOriginal
+ls    
+
+openssl enc -d -aes-256-cbc -pbkdf2 -in respaldo.enc -pass pass:ClaveOriginal  
+openssl enc -d -aes-256-cbc -pbkdf2 -in respaldo.enc -pass pass:OtraClave       # muestra bad decrypt
